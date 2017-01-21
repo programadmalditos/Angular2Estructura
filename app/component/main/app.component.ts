@@ -1,22 +1,34 @@
-import { Component } from '@angular/core';
+import { Component,OnInit } from '@angular/core';
 import { Producto } from '../../classes/Producto';
-
+import { ProductoServiceHttp } from '../../services/listaCompra-service-http/listaCompra.service.http';
 @Component({
   moduleId: module.id,
   selector: 'my-app',
   templateUrl: 'App.html',
 })
-export class AppComponent  {
-  productos: Array<Producto> = [
-    new Producto(1, 'Leche', 1, 3),
-    new Producto(2, 'Patatas', 0.70, 3, 'Para freir')
-  ];
+export class AppComponent  implements OnInit  {
+  productos: Array<Producto>;
+ 
+constructor(private productoService: ProductoServiceHttp) {
+
+  }
+
+ngOnInit()
+    {
+           this.productoService.getProductos().subscribe(o => {
+
+            this.productos = o;
+        });
+    }
 
 guardar(model: Producto): void {
-  let v=Math.max.apply(Math,this.productos.map(function(o){return o.id;}));
-  model.id=++v;
+  //let v=Math.max.apply(Math,this.productos.map(function(o){return o.id;}));
+  //model.id=++v;
 
-  this.productos.push(model);
+   this.productoService.addProducto(model).subscribe(o => {
+
+            this.productos.push(o);
+        });;
 }
 
 }
